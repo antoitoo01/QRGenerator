@@ -1,0 +1,474 @@
+<script setup>
+import { ref, watch, computed, defineProps } from "vue";
+import ColorPicker from "../../../Components/My_components/MyColorPicker.vue";
+import ColorPickerForm from "../../../Components/My_components/ColorPickerForm.vue";
+
+import DesignPicker from "../../../Components/My_components/DesignPicker.vue";
+import LogoPicker from "../../../Components/My_components/LogoPicker.vue";
+import DropdownButton from "../../../Components/My_components/MyDropdown.vue";
+import QRCodeGenerator from "../../../Components/My_components/QRCodeGenerator.vue";
+
+const props = defineProps(["logos", "dotsTypes", "eyesTypes", "eyeFrameTypes"]);
+
+//Booleans:
+const FirstButtonIsOpen = ref(true);
+const SecondButtonIsOpen = ref(false);
+const ThirdButtonIsOpen = ref(false);
+const FourthButtonIsOpen = ref(false);
+const eyesIsChecked = ref(false);
+const transparentBgIsChecked = ref(true);
+
+//Títulos botones:
+const textButtonText = "INTRODUCE CONTENIDO";
+const colorsButtonText = "ESCOGE COLORES";
+const logoButtonText = "AÑADIR LOGO";
+const designButtonText = "PERSONALIZAR DISEÑO";
+
+//Variables para el QR ----------------------------------------------------
+const name = ref("");
+const surname = ref("");
+const email = ref("");
+const workTlf = ref("");
+const workTlfFax = ref("");
+const cellTlf = ref("");
+const homeTlf = ref("");
+const homeTlfFax = ref("");
+const street = ref("");
+const zipcode = ref("");
+const city = ref("");
+const state = ref("");
+const country = ref("");
+const website = ref("");
+const position = ref("");
+const organization = ref("");
+
+const nameText = computed(() => {
+  return "N:" + surname.value + ";" + name.value;
+});
+
+const addressText = computed(() => {
+  return (
+    "ADR:" +
+    street.value +
+    "," +
+    city.value +
+    "," +
+    state.value +
+    "," +
+    zipcode.value +
+    "," +
+    country.value
+  );
+});
+
+const organizationText = computed(() => {
+  return "ORG:" + organization.value + ";" + position.value;
+});
+
+const finalText = computed(() => {
+  let final = "BEGIN:VCARD" + "\n";
+  final += nameText.value + ";\n";
+  final += "TEL;CELL:" + cellTlf.value.toString() + ";\n";
+  final += "TEL;WORK:" + workTlf.value.toString() + ";\n";
+  final += "TEL;WORK;FAX:" + workTlfFax.value.toString() + ";\n";
+  final += "TEL;HOME:" + homeTlf.value.toString() + ";\n";
+  final += "TEL;HOME;FAX:" + homeTlfFax.value.toString() + ";\n";
+  final += addressText.value + ";\n";
+  final += organizationText.value + ";\n";
+  final += "URL:" + website.value + ";\n";
+  final += "EMAIL:" + email.value + ";\n";
+  final += "END:VCARD";
+
+  return final;
+});
+
+//Colores del QR:
+const colorCount = ref(1);
+const colorsValue1 = ref("#000000");
+const eyeColorsValue1 = ref("#000000");
+const eyeColorsValue2 = ref("#000000");
+const colorsArray = ref([colorsValue1.value]);
+const eyeColorsArray = ref([eyeColorsValue1.value, eyeColorsValue2.value]);
+const backgroundColor = ref(["#FFFFFF00"]);
+
+const logoValue = ref(null);
+
+//Partes del QR:
+const selectedDotsType = ref("square");
+const selectedEyeType = ref("square");
+const selectedEyeFrameType = ref("square");
+
+// Definir los nombres de los botones
+const buttonName = ref("Descargar QR");
+const downloadButton = ref("Descargar QR");
+//FIN Variables para el QR -------------------------------------------------
+
+watch(eyesIsChecked, (isChecked) => {
+  if (!isChecked) {
+    eyeColorsValue1.value = "#000000";
+    eyeColorsValue2.value = "#000000";
+    eyeColorsArray.value = [eyeColorsValue1.value, eyeColorsValue2.value];
+  }
+});
+
+watch(transparentBgIsChecked, (isChecked) => {
+  const alphaValue = isChecked ? "00" : "FF";
+  const hasAlpha = backgroundColor.value[0].length === 9;
+
+  if (isChecked && !hasAlpha) {
+    backgroundColor.value[0] += alphaValue;
+  } else if (!isChecked && hasAlpha) {
+    backgroundColor.value[0] = backgroundColor.value[0].slice(0, -2);
+  }
+});
+
+watch(colorCount, (newVal) => {
+  colorCount.value = newVal;
+
+  if (newVal < 2) {
+    colorsArray.value[1] = "#000000";
+  }
+});
+
+const handleColorCountUpdate = (newCount) => {
+  colorCount.value = newCount;
+};
+
+const handleColorUpdate = (updatedColors) => {
+  colorsArray.value = updatedColors;
+};
+const handleBgColorUpdate = (updatedColor) => {
+  if (!transparentBgIsChecked.value) {
+    backgroundColor.value = updatedColor;
+  } else {
+    transparentBgIsChecked.value = false;
+  }
+};
+
+const handleEyeColorUpdate = (updatedColors) => {
+  eyeColorsArray.value = updatedColors;
+};
+
+const handleLogoSelected = (logo) => {
+  logoValue.value = logo;
+};
+
+const handleDotsTypeSelected = (type) => {
+  selectedDotsType.value = type.value;
+};
+
+const handleEyeTypeSelected = (type) => {
+  selectedEyeType.value = type.value;
+};
+
+const handleEyeFrameTypeSelected = (type) => {
+  selectedEyeFrameType.value = type.value;
+};
+</script>
+
+<template>
+  <form class="flex flex-row">
+    <!-- Parte izquierda de la página -->
+    <div name="MainContainer" class="flex flex-col size-full pr-2">
+      <!-- DropDown URL-->
+      <div name="FirstButton">
+        <DropdownButton
+          :buttonText="textButtonText"
+          :defaultState="FirstButtonIsOpen"
+        >
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4 gap-4 overflow-y-auto max-h-[35rem]"
+          >
+            <div>
+              <p class="pb-2"><b>Nombre</b></p>
+              <input
+                v-model="name"
+                type="text"
+                class="custom-input"
+                placeholder="Introducir nombre"
+              />
+            </div>
+            <div>
+              <p class="pb-2"><b>Apellidos</b></p>
+              <input
+                v-model="surname"
+                type="text"
+                class="custom-input"
+                placeholder="Introducir apellidos"
+              />
+            </div>
+            <div>
+              <p class="pb-2"><b>Empresa</b></p>
+              <input
+                v-model="organization"
+                type="text"
+                class="custom-input"
+                placeholder="Introducir empresa"
+              />
+            </div>
+            <div>
+              <p class="pb-2"><b>Puesto de trabajo</b></p>
+              <input
+                v-model="position"
+                type="text"
+                class="custom-input"
+                placeholder="Introducir puesto de trabajo"
+              />
+            </div>
+            <div>
+              <p class="pb-2"><b>Teléfono (Móvil)</b></p>
+              <input
+                v-model="cellTlf"
+                type="text"
+                class="custom-input"
+                placeholder="Introducir número de teléfono"
+              />
+            </div>
+            <div>
+              <p class="pb-2"><b>Teléfono (Casa)</b></p>
+              <input
+                v-model="homeTlf"
+                type="text"
+                class="custom-input"
+                placeholder="Introducir número de teléfono"
+              />
+            </div>
+            <div>
+              <p class="pb-2"><b>Fax (Casa)</b></p>
+              <input
+                v-model="homeTlfFax"
+                type="text"
+                class="custom-input"
+                placeholder="Introducir número de fax"
+              />
+            </div>
+            <div>
+              <p class="pb-2"><b>Teléfono (Trabajo)</b></p>
+              <input
+                v-model="workTlf"
+                type="text"
+                class="custom-input"
+                placeholder="Introducir número de teléfono"
+              />
+            </div>
+            <div>
+              <p class="pb-2"><b>Fax (Trabajo)</b></p>
+              <input
+                v-model="workTlfFax"
+                type="text"
+                class="custom-input"
+                placeholder="Introducir número de fax"
+              />
+            </div>
+            <div>
+              <p class="pb-2"><b>Email</b></p>
+              <input
+                v-model="email"
+                type="text"
+                class="custom-input"
+                placeholder="Introducir correo electrónico"
+              />
+            </div>
+            <div>
+              <p class="pb-2"><b>Website</b></p>
+              <input
+                v-model="website"
+                type="text"
+                class="custom-input"
+                placeholder="Introducir URL página web"
+              />
+            </div>
+            <div>
+              <p class="pb-2"><b>Dirección</b></p>
+              <input
+                v-model="street"
+                type="text"
+                class="custom-input"
+                placeholder="Introducir dirección"
+              />
+            </div>
+            <div>
+              <p class="pb-2"><b>Ciudad</b></p>
+              <input
+                v-model="city"
+                type="text"
+                class="custom-input"
+                placeholder="Introducir ciudad"
+              />
+            </div>
+            <div>
+              <p class="pb-2"><b>Estado</b></p>
+              <input
+                v-model="state"
+                type="text"
+                class="custom-input"
+                placeholder="Introducir estado"
+              />
+            </div>
+            <div>
+              <p class="pb-2"><b>Código postal</b></p>
+              <input
+                v-model="zipcode"
+                type="text"
+                class="custom-input"
+                placeholder="Introducir código postal"
+              />
+            </div>
+            <div>
+              <p class="pb-2"><b>País</b></p>
+              <input
+                v-model="country"
+                type="text"
+                class="custom-input"
+                placeholder="Introducir país"
+              />
+            </div>
+          </div>
+        </DropdownButton>
+      </div>
+      <div name="Separator" class="py-2" />
+      <!-- DropDown Colores -->
+      <div name="SecondButton">
+        <DropdownButton
+          :buttonText="colorsButtonText"
+          :defaultState="SecondButtonIsOpen"
+        >
+          <p class="pb-2"><b>¿Cuántos colores?</b></p>
+          <div class="flex flex-row place-content-start overflow-auto">
+            <div class="flex flex-col pr-14">
+              <ColorPickerForm
+                :colorCount="colorCount"
+                :texto1="'Un color'"
+                :texto2="'Dos colores'"
+                @update:colorCount="handleColorCountUpdate"
+              >
+                <br />
+                <ColorPicker
+                  :colors="colorsArray"
+                  :colorCount="colorCount"
+                  @update:colors="handleColorUpdate"
+                />
+              </ColorPickerForm>
+              <br />
+              <p class="pb-2"><b>Color del fondo</b></p>
+              <ColorPicker
+                :colors="[backgroundColor]"
+                @update:colors="handleBgColorUpdate"
+              />
+
+              <div
+                class="flex flex-row place-content-center place-items-center justify-center"
+              >
+                <label for="transparent" class="mr-2">Fondo transparente</label
+                ><br />
+                <input
+                  type="checkbox"
+                  v-model="transparentBgIsChecked"
+                  id="transparent"
+                  name="transparent"
+                  class="text-orange-500"
+                  checked
+                />
+              </div>
+            </div>
+            <div class="flex flex-col place-items-center">
+              <div class="flex place-items-center">
+                <input
+                  id="eyesIsCheck"
+                  class="mr-2 text-orange-500"
+                  type="checkbox"
+                  v-model="eyesIsChecked"
+                />
+                <label for="eyesIsCheck">Color de ojo personalizado</label>
+              </div>
+              <br />
+              <div
+                v-if="eyesIsChecked"
+                class="flex flex-row place-items-center"
+              >
+                <ColorPicker
+                  class="flex flex-col"
+                  :colors="eyeColorsArray"
+                  @update:colors="handleEyeColorUpdate"
+                />
+                <div class="flex flex-col">
+                  <p class="px-2 pb-4 text-slate-500">Exterior</p>
+                  <p class="px-2 pt-2 text-slate-500">Interior</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </DropdownButton>
+      </div>
+      <div name="Separator" class="py-2" />
+
+      <!-- DropDown Logo -->
+      <div name="ThirdButton">
+        <DropdownButton
+          :buttonText="logoButtonText"
+          :defaultState="ThirdButtonIsOpen"
+        >
+          <LogoPicker
+            :selectedLogo="logoValue"
+            :logosList="props.logos"
+            @logo-selected="handleLogoSelected"
+            class="pt-2"
+          />
+        </DropdownButton>
+      </div>
+      <div name="Separator" class="py-2" />
+
+      <!-- DropDown Personalizar-->
+      <div name="FourthButton">
+        <DropdownButton
+          :buttonText="designButtonText"
+          :defaultState="FourthButtonIsOpen"
+        >
+          <DesignPicker
+            :dotsTypesList="props.dotsTypes"
+            :eyesTypesList="props.eyesTypes"
+            :eyeFrameTypes="props.eyeFrameTypes"
+            @dotType-selected="handleDotsTypeSelected"
+            @eyeType-selected="handleEyeTypeSelected"
+            @eyeFrameType-selected="handleEyeFrameTypeSelected"
+          />
+        </DropdownButton>
+        <br />
+      </div>
+    </div>
+
+    <!-- Parte derecha de la página -->
+    <div class="flex pl-2 w-full h-full">
+      <div class="fixed pr-20">
+        <div
+          class="flex flex-col min-w-[30%] min-h-56 h-fit w-fit py-4 px-6 items-center justify-start place-content-center rounded-lg bg-orange-500 shadow-slate-800 shadow-md"
+        >
+          <QRCodeGenerator
+            :userUrl="finalText"
+            :ButtonName="buttonName"
+            :downloadButton="downloadButton"
+            :colorsValue1="colorsArray[0]"
+            :colorsValue2="colorsArray[1] || '#000000'"
+            :cornersSquareColor="eyeColorsArray[0] || '#000000'"
+            :selectedLogo="logoValue"
+            :cornersDotColor="eyeColorsArray[1] || '#000000'"
+            :backgroundColor="backgroundColor[0] || '#FFFFFF'"
+            :dotsType="selectedDotsType || 'dot'"
+            :eyeType="selectedEyeType || 'dot'"
+            :eyeFrameType="selectedEyeFrameType || 'dot'"
+          />
+        </div>
+      </div>
+    </div>
+  </form>
+</template>
+
+<style scoped>
+.radio-input {
+  @apply text-orange-500;
+}
+
+.custom-label {
+  @apply px-2;
+}
+</style>
