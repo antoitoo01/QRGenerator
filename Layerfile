@@ -3,6 +3,12 @@ FROM vm/ubuntu:22.04
 
 # To note: Layerfiles create entire VMs, *not* containers!
 
+# Install Node.js and npm
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
+RUN apt-get update && apt-get install -y nodejs
+
+RUN npm install -g @vue/cli
+
 # Install php5 & composer
 RUN apt-get update && \
     apt-get install software-properties-common && \
@@ -32,7 +38,13 @@ RUN composer create-project --prefer-dist laravel/laravel QRGenerator
 # Change working directory to the Laravel project
 WORKDIR QRGenerator
 RUN composer install
+
+RUN npm install
+
+
 RUN BACKGROUND php artisan serve --host 0.0.0.0 --port 80
+
+RUN BACKGROUND npm start
 
 # Expose website creates a unique link to view the website running in the server
 EXPOSE WEBSITE http://localhost:80
