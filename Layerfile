@@ -8,6 +8,7 @@ RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
 RUN apt-get update && apt-get install -y nodejs
 
 RUN npm install -g @vue/cli
+RUN npm install vue
 
 # Install php5 & composer
 RUN apt-get update && \
