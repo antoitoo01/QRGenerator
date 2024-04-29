@@ -38,6 +38,9 @@ RUN composer create-project --prefer-dist laravel/laravel QRGenerator
 
 # Change working directory to the Laravel project
 WORKDIR QRGenerator
+
+COPY .env .
+
 RUN composer install
 
 RUN npm install
