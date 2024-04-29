@@ -15,7 +15,7 @@ RUN apt-get update && \
     php8.2-zip \
     php8.2-dom \
     php8.2-curl \
-    php8.2-sqlite3
+    php8.2-sqlite3 \
     git \
     unzip
 RUN curl -sS https://getcomposer.org/installer -o composer-setup.php && \
