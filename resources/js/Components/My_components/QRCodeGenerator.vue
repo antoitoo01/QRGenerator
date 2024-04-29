@@ -65,7 +65,7 @@ function downloadQR() {
   var nombreArchivo = "your_qr_" + timestamp + ".png";
 
   // Usa html2canvas para convertir el contenido del div en un lienzo
-  html2canvas(qrDiv).then(function (canvas) {
+  html2canvas(qrDiv, { backgroundColor: null }).then(function (canvas) {
     // Crea un elemento <a> para descargar la imagen
     var link = document.createElement("a");
     // Establece el atributo href con los datos de la imagen en formato base64
@@ -110,7 +110,9 @@ function downloadQR() {
             ],
           },
         }"
-        :backgroundOptions="{ color: props.backgroundColor }"
+        :backgroundOptions="{
+          color: props.backgroundColor || 'rgba(0, 0, 0, 0)',
+        }"
         :cornersSquareOptions="{
           type: props.eyeFrameType,
           color: props.cornersSquareColor || '#000000',

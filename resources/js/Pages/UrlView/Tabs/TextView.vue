@@ -83,11 +83,11 @@ const handleColorUpdate = (updatedColors) => {
   colorsArray.value = updatedColors;
 };
 const handleBgColorUpdate = (updatedColor) => {
-  if (!transparentBgIsChecked.value) {
-    backgroundColor.value = updatedColor;
-  } else {
+  if (transparentBgIsChecked.value) {
     transparentBgIsChecked.value = false;
   }
+
+  backgroundColor.value = updatedColor;
 };
 
 const handleEyeColorUpdate = (updatedColors) => {
