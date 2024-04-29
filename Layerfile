@@ -14,6 +14,7 @@ RUN apt-get update && \
     php8.2-mbstring \
     php8.2-zip \
     php8.2-dom \
+    php8.2-curl \
     git \
     unzip
 RUN curl -sS https://getcomposer.org/installer -o composer-setup.php && \
