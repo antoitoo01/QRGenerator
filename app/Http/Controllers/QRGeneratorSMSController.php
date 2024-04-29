@@ -8,9 +8,6 @@ use App\Http\Controllers\LogoController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Session;
 
-
-require_once "../../Services/ResourceService.php";
-
 class QRGeneratorSMSController extends Controller
 {
     public function index()

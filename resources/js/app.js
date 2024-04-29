@@ -11,7 +11,7 @@ import NavBarLayout from '@/Layouts/NavBarLayout.vue';
 const appName = import.meta.env.VITE_APP_NAME || 'QR Generator';
 
 createInertiaApp({
-    title: (title) => `${title} - ${appName}`,
+    title: (title) => `${appName}`,
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
     setup({ el, App, props, plugin }) {
         return createApp({ render: () => h(NavBarLayout, {},

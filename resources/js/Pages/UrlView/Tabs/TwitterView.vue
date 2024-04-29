@@ -142,18 +142,14 @@ const handleEyeFrameTypeSelected = (type) => {
           :buttonText="textButtonText"
           :defaultState="FirstButtonIsOpen"
         >
-          <div
-            class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4 gap-4 overflow-y-auto max-h-[35rem]"
-          >
-            <div>
-              <p class="pb-2"><b>Twitter URL</b></p>
-              <input
-                v-model="textValue"
-                type="text"
-                class="custom-input"
-                placeholder="https://twitter.com"
-              />
-            </div>
+          <div>
+            <p class="pb-2"><b>Twitter URL</b></p>
+            <input
+              v-model="textValue"
+              type="text"
+              class="custom-input"
+              placeholder="https://twitter.com"
+            />
           </div>
         </DropdownButton>
       </div>
