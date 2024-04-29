@@ -6,8 +6,6 @@ FROM vm/ubuntu:22.04
 # Install Node.js and npm
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
 RUN apt-get update && apt-get install -y nodejs
-
-RUN npm install -g @vue/cli
 RUN npm install vue
 
 # Install php5 & composer
