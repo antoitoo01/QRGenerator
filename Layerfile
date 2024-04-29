@@ -40,11 +40,9 @@ WORKDIR QRGenerator
 RUN composer install
 
 RUN npm install
-
-
 RUN BACKGROUND php artisan serve --host 0.0.0.0 --port 80
 
-RUN BACKGROUND npm start
+RUN BACKGROUND npm run dev
 
 # Expose website creates a unique link to view the website running in the server
 EXPOSE WEBSITE http://localhost:80
